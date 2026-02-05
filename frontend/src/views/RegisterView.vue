@@ -38,6 +38,34 @@ export default defineComponent({
   },
 
   methods: {
+    validateField(field: keyof typeof this.errors): void {
+      // Validar campo individual en tiempo real
+      switch (field) {
+        case 'name':
+          this.errors.name = validators.required(this.form.name, 'El nombre') || '';
+          break;
+        case 'email':
+          this.errors.email = validators.email(this.form.email) || '';
+          break;
+        case 'password':
+          this.errors.password = validators.password(this.form.password) || '';
+          // Re-validar confirmPassword si ya tiene valor
+          if (this.form.confirmPassword) {
+            this.errors.confirmPassword = validators.confirmPassword(
+              this.form.password,
+              this.form.confirmPassword
+            ) || '';
+          }
+          break;
+        case 'confirmPassword':
+          this.errors.confirmPassword = validators.confirmPassword(
+            this.form.password,
+            this.form.confirmPassword
+          ) || '';
+          break;
+      }
+    },
+
     validateForm(): boolean {
       this.errors = {
         name: '',
@@ -121,6 +149,7 @@ export default defineComponent({
                 placeholder="Ingresa tu nombre completo"
                 :disabled="loading"
                 class="form-input"
+                @blur="validateField('name')"
               />
             </div>
             <span v-if="errors.name" class="error-message">{{ errors.name }}</span>
@@ -141,6 +170,7 @@ export default defineComponent({
                 placeholder="nombre@empresa.com"
                 :disabled="loading"
                 class="form-input"
+                @blur="validateField('email')"
               />
             </div>
             <span v-if="errors.email" class="error-message">{{ errors.email }}</span>
@@ -161,6 +191,7 @@ export default defineComponent({
                 placeholder="Mínimo 6 caracteres"
                 :disabled="loading"
                 class="form-input"
+                @blur="validateField('password')"
               />
               <button
                 type="button"
@@ -197,6 +228,7 @@ export default defineComponent({
                 placeholder="Repite tu contraseña"
                 :disabled="loading"
                 class="form-input"
+                @blur="validateField('confirmPassword')"
               />
               <button
                 type="button"

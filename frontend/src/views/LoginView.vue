@@ -24,6 +24,18 @@ export default defineComponent({
   },
 
   methods: {
+    validateField(field: keyof typeof this.errors): void {
+      // Validar campo individual en tiempo real
+      switch (field) {
+        case 'email':
+          this.errors.email = validators.email(this.form.email) || '';
+          break;
+        case 'password':
+          this.errors.password = validators.password(this.form.password) || '';
+          break;
+      }
+    },
+
     validateForm(): boolean {
       this.errors = {
         email: '',
@@ -97,6 +109,7 @@ export default defineComponent({
                 class="form-input"
                 placeholder="correo@ejemplo.com"
                 :disabled="loading"
+                @blur="validateField('email')"
               />
             </div>
             <span v-if="errors.email" class="error">{{ errors.email }}</span>
@@ -118,6 +131,7 @@ export default defineComponent({
                 class="form-input"
                 placeholder="••••••••"
                 :disabled="loading"
+                @blur="validateField('password')"
               />
               <button
                 type="button"

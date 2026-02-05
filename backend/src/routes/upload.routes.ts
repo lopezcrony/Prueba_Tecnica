@@ -20,9 +20,6 @@ router.get('/', uploadController.getUserUploads);
 // GET /api/v1/uploads/all - Obtener todos los uploads (solo admin)
 router.get('/all', roleMiddleware('admin'), uploadController.getAllUploads);
 
-// GET /api/v1/uploads/:id - Obtener upload por ID
-router.get('/:id', uploadController.getUploadById);
-
 // GET /api/v1/uploads/:id/download - Descargar archivo original
 router.get('/:id/download', uploadController.downloadUpload);
 

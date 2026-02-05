@@ -114,40 +114,6 @@ export class UploadController {
 
   /**
    * @swagger
-   * /uploads/{id}:
-   *   get:
-   *     summary: Obtener upload por ID
-   *     tags: [Uploads]
-   *     security:
-   *       - bearerAuth: []
-   *     parameters:
-   *       - in: path
-   *         name: id
-   *         required: true
-   *         schema:
-   *           type: integer
-   *     responses:
-   *       200:
-   *         description: Detalle del upload
-   *       404:
-   *         description: Upload no encontrado
-   */
-  getUploadById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const { id } = req.params;
-      const upload = await this.uploadService.getUploadById(Number(id));
-      
-      res.status(200).json({
-        status: 'success',
-        data: upload
-      });
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  /**
-   * @swagger
    * /uploads/{id}/download:
    *   get:
    *     summary: Descargar archivo CSV original

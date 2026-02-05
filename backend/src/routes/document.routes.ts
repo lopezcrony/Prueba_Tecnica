@@ -51,19 +51,4 @@ router.post(
   documentController.upload
 );
 
-// Listar documentos (usuarios autenticados)
-router.get(
-  '/',
-  authMiddleware,
-  documentController.list
-);
-
-// Eliminar documento (solo admin)
-router.delete(
-  '/:id',
-  authMiddleware,
-  roleMiddleware('admin'),
-  documentController.delete
-);
-
 export default router;
