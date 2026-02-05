@@ -83,7 +83,6 @@ export class AuthController {
    */
   register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      // Validar DTO
       const dto = plainToClass(RegisterDTO, req.body);
       const errors = await validate(dto);
 
@@ -95,7 +94,6 @@ export class AuthController {
         throw new ValidationError('Errores de validación', errorMessages);
       }
 
-      // Registrar usuario
       const result = await this.authService.register(dto);
 
       res.status(201).json(

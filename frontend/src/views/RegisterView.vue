@@ -39,7 +39,6 @@ export default defineComponent({
 
   methods: {
     validateField(field: keyof typeof this.errors): void {
-      // Validar campo individual en tiempo real
       switch (field) {
         case 'name':
           this.errors.name = validators.required(this.form.name, 'El nombre') || '';
@@ -49,7 +48,6 @@ export default defineComponent({
           break;
         case 'password':
           this.errors.password = validators.password(this.form.password) || '';
-          // Re-validar confirmPassword si ya tiene valor
           if (this.form.confirmPassword) {
             this.errors.confirmPassword = validators.confirmPassword(
               this.form.password,
@@ -105,7 +103,6 @@ export default defineComponent({
         
         await showSuccess('¡Usuario registrado exitosamente!', '¡Bienvenido!');
         
-        // Redirigir al login
         this.$router.push({ name: 'login' });
       } catch (error: any) {
         closeLoading();

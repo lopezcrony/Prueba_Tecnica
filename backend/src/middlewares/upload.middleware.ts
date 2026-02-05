@@ -3,13 +3,11 @@ import path from 'path';
 import fs from 'fs';
 import { Request } from 'express';
 
-// Crear directorio de uploads si no existe
 const uploadDir = path.join(__dirname, '../../uploads');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// Configuración de almacenamiento
 const storage = multer.diskStorage({
   destination: (req: Request, file: Express.Multer.File, cb) => {
     cb(null, uploadDir);
@@ -20,7 +18,6 @@ const storage = multer.diskStorage({
   }
 });
 
-// Filtro de archivos - solo CSV
 const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
   if (file.mimetype === 'text/csv' || path.extname(file.originalname).toLowerCase() === '.csv') {
     cb(null, true);
@@ -29,12 +26,10 @@ const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilt
   }
 };
 
-// Límite de tamaño de archivo: 5MB
 const limits = {
-  fileSize: 5 * 1024 * 1024 // 5MB
+  fileSize: 5 * 1024 * 1024
 };
 
-// Middleware de upload configurado
 export const uploadMiddleware = multer({
   storage,
   fileFilter,

@@ -43,12 +43,6 @@ const documentController = new DocumentController();
  *           format: date-time
  */
 
-// Subir archivo CSV (usuarios autenticados)
-router.post(
-  '/upload',
-  authMiddleware,
-  uploadMiddleware,
-  documentController.upload
-);
+router.post('/upload', authMiddleware, uploadMiddleware, documentController.upload);
 
 export default router;

@@ -1,8 +1,3 @@
-/**
- * Configuración de Vue Router
- * Incluye rutas y guards de autenticación
- */
-
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '../stores/auth.store';
 
@@ -38,18 +33,15 @@ const router = createRouter({
   ],
 });
 
-// Navigation Guard: Proteger rutas
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
   const authStore = useAuthStore();
   const isAuthenticated = authStore.isAuthenticated;
 
-  // Si la ruta requiere autenticación
   if (to.meta.requiresAuth && !isAuthenticated) {
     next({ name: 'login' });
     return;
   }
 
-  // Si la ruta es solo para invitados (login/register)
   if (to.meta.requiresGuest && isAuthenticated) {
     next({ name: 'dashboard' });
     return;

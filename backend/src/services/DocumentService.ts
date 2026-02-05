@@ -33,10 +33,8 @@ export class DocumentService implements IDocumentService {
 
   async uploadCSV(filePath: string, originalFileName: string, userId: number): Promise<UploadCSVResult> {
     try {
-      // Parsear y validar CSV
       const result = await this.csvService.parseAndValidateCSV(filePath);
 
-      // Si hay errores, lanzar excepción con detalles
       if (!result.isValid) {
         throw new CSVValidationError(
           'El archivo CSV contiene errores de validación',
@@ -44,7 +42,6 @@ export class DocumentService implements IDocumentService {
         );
       }
 
-      // Crear registro de Upload
       const upload = await this.uploadRepository.create({
         originalFileName,
         filePath,
@@ -52,7 +49,6 @@ export class DocumentService implements IDocumentService {
         uploadedById: userId
       });
 
-      // Preparar datos para insertar
       const documentsToInsert: CreateDocumentData[] = result.data.map((record) => ({
         correo: record.correo,
         nombre: record.nombre,
@@ -62,7 +58,6 @@ export class DocumentService implements IDocumentService {
         uploadId: upload.id,
       }));
 
-      // Insertar todos los registros
       await this.documentRepository.createMany(documentsToInsert);
 
       return {
@@ -71,7 +66,6 @@ export class DocumentService implements IDocumentService {
         uploadId: upload.id,
       };
     } catch (error) {
-      // NO eliminar archivo en caso de error - lo necesitamos para descargar después
       throw error;
     }
   }
@@ -115,7 +109,6 @@ export class DocumentService implements IDocumentService {
       throw new NotFoundError('Documento', id.toString());
     }
 
-    // Solo admin puede eliminar cualquier documento
     if (userRole !== 'admin') {
       throw new ForbiddenError();
     }

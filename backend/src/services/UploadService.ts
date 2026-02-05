@@ -45,17 +45,14 @@ export class UploadService implements IUploadService {
   async deleteUpload(id: number, userId: number, userRole: string): Promise<void> {
     const upload = await this.getUploadById(id);
 
-    // Solo admin o el usuario que subió el archivo puede eliminarlo
     if (userRole !== 'admin' && upload.uploadedById !== userId) {
       throw new ForbiddenError('Solo puedes eliminar tus propios archivos');
     }
 
-    // Eliminar el archivo físico
     if (fs.existsSync(upload.filePath)) {
       fs.unlinkSync(upload.filePath);
     }
 
-    // Eliminar el registro (cascade eliminará los documents asociados)
     const deleted = await this.uploadRepository.delete(id);
     
     if (!deleted) {

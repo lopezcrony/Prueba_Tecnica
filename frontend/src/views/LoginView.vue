@@ -25,7 +25,6 @@ export default defineComponent({
 
   methods: {
     validateField(field: keyof typeof this.errors): void {
-      // Validar campo individual en tiempo real
       switch (field) {
         case 'email':
           this.errors.email = validators.email(this.form.email) || '';
@@ -64,7 +63,6 @@ export default defineComponent({
         
         closeLoading();
         
-        // Redirigir al dashboard
         this.$router.push({ name: 'dashboard' });
       } catch (error: any) {
         closeLoading();

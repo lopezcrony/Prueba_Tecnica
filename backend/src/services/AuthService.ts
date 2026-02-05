@@ -27,21 +27,17 @@ export class AuthService implements IAuthService {
   async register(data: RegisterData): Promise<RegisterResponse> {
     const { name, email, password, confirmPassword, role } = data;
 
-    // Verificar que las contraseñas coincidan
     if (password !== confirmPassword) {
       throw new ValidationError('Las contraseñas no coinciden');
     }
 
-    // Verificar si el usuario ya existe
     const existingUser = await this.userRepository.findByEmail(email);
     if (existingUser) {
       throw new ConflictError('El usuaio ya existe');
     }
 
-    // Hashear contraseña
     const hashedPassword = await this.hashPassword(password);
 
-    // Crear usuario
     const user = await this.userRepository.create({
       name,
       email,
@@ -63,19 +59,16 @@ export class AuthService implements IAuthService {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     const { email, password } = credentials;
 
-    // Buscar usuario
     const user = await this.userRepository.findByEmail(email);
     if (!user) {
       throw new InvalidCredentialsError();
     }
 
-    // Verificar contraseña
     const isValid = await this.comparePasswords(password, user.password);
     if (!isValid) {
       throw new InvalidCredentialsError();
     }
 
-    // Generar token
     const token = this.generateToken(user.id, user.email, user.role);
 
     return {

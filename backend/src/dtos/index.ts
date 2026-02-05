@@ -1,6 +1,5 @@
 import { IsEmail, IsNotEmpty, IsString, MinLength, Matches, IsIn, IsOptional } from 'class-validator';
 
-// DTO para registro de usuarios
 export class RegisterDTO {
   @IsNotEmpty({ message: 'El nombre es requerido' })
   @IsString()
@@ -21,7 +20,6 @@ export class RegisterDTO {
   role!: 'user' | 'admin';
 }
 
-// DTO para login
 export class LoginDTO {
   @IsEmail({}, { message: 'Debe ser un email válido' })
   email!: string;
@@ -30,7 +28,6 @@ export class LoginDTO {
   password!: string;
 }
 
-// DTO para validar cada registro del CSV
 export class DocumentRecordDTO {
   @IsEmail({}, { message: 'El correo debe ser un email válido' })
   correo!: string;

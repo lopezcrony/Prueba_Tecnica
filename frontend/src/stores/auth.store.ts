@@ -1,8 +1,3 @@
-/**
- * Store de autenticación usando Pinia Option Stores
- * Maneja el estado del usuario y token JWT
- */
-
 import { defineStore } from 'pinia';
 import { authService } from '../services/auth.service';
 import { storage } from '../utils/storage';
@@ -17,7 +12,6 @@ interface AuthState {
 }
 
 export const useAuthStore = defineStore('auth', {
-  // Estado
   state: (): AuthState => ({
     user: storage.getUser(),
     token: storage.getToken(),
@@ -26,7 +20,6 @@ export const useAuthStore = defineStore('auth', {
     error: null,
   }),
 
-  // Getters
   getters: {
     isAdmin(): boolean {
       return this.user?.role === 'admin';
@@ -37,11 +30,7 @@ export const useAuthStore = defineStore('auth', {
     },
   },
 
-  // Actions
   actions: {
-    /**
-     * Iniciar sesión
-     */
     async login(credentials: LoginCredentials): Promise<void> {
       this.loading = true;
       this.error = null;
@@ -49,12 +38,10 @@ export const useAuthStore = defineStore('auth', {
       try {
         const response = await authService.login(credentials);
         
-        // Guardar en el store
         this.user = response.user;
         this.token = response.token;
         this.isAuthenticated = true;
         
-        // Guardar en localStorage
         storage.setToken(response.token);
         storage.setUser(response.user);
       } catch (error: any) {
@@ -65,17 +52,12 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    /**
-     * Registrar nuevo usuario
-     */
     async register(data: RegisterData): Promise<void> {
       this.loading = true;
       this.error = null;
 
       try {
         await authService.register(data);
-        // No guardamos nada porque register no devuelve token
-        // El usuario debe hacer login después
       } catch (error: any) {
         this.error = error.response?.data?.error?.message || 'Error al registrar usuario';
         throw error;
@@ -84,22 +66,15 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    /**
-     * Cerrar sesión
-     */
     logout(): void {
       this.user = null;
       this.token = null;
       this.isAuthenticated = false;
       this.error = null;
       
-      // Limpiar localStorage
       storage.clear();
     },
 
-    /**
-     * Restaurar sesión desde localStorage
-     */
     restoreSession(): void {
       const token = storage.getToken();
       const user = storage.getUser();

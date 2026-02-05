@@ -5,11 +5,9 @@ import { ENV } from './config/env';
 
 const startServer = async () => {
   try {
-    // Inicializar conexión a base de datos
     await AppDataSource.initialize();
     console.log('✅ Database connected successfully');
 
-    // Iniciar servidor
     App.listen(ENV.PORT, ENV.HOST, () => {
       console.log(`🚀 Server running on http://${ENV.HOST}:${ENV.PORT}`);
       console.log(`📚 API Docs available at http://localhost:${ENV.PORT}${ENV.API_PREFIX}/docs`);

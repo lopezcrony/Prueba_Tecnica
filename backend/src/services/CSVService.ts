@@ -21,7 +21,6 @@ export class CSVService implements ICSVService {
     const records: any[] = [];
     const errors: CSVValidationError[] = [];
 
-    // Leer CSV
     await new Promise<void>((resolve, reject) => {
       fs.createReadStream(filePath)
         .pipe(csv())
@@ -32,12 +31,10 @@ export class CSVService implements ICSVService {
         .on('error', (error) => reject(error));
     });
 
-    // Verificar que no esté vacío
     if (records.length === 0) {
       throw new EmptyFileError();
     }
 
-    // Verificar headers requeridos
     const firstRow = records[0];
     const missingHeaders = this.requiredHeaders.filter(
       (header) => !(header in firstRow)
@@ -47,14 +44,12 @@ export class CSVService implements ICSVService {
       throw new MissingHeadersError(missingHeaders);
     }
 
-    // Validar cada registro
     const validatedRecords: DocumentRecordDTO[] = [];
 
     for (let i = 0; i < records.length; i++) {
       const row = records[i];
-      const rowNumber = i + 2; // +2 porque la fila 1 son headers
+      const rowNumber = i + 2;
 
-      // Convertir a DTO
       const dto = plainToClass(DocumentRecordDTO, {
         correo: row.correo?.trim(),
         nombre: row.nombre?.trim(),
@@ -63,11 +58,9 @@ export class CSVService implements ICSVService {
         notas: row.notas?.trim() || undefined,
       });
 
-      // Validar con class-validator
       const validationErrors = await validate(dto);
 
       if (validationErrors.length > 0) {
-        // Extraer errores
         validationErrors.forEach((error) => {
           const field = error.property;
           const value = (row as any)[field];

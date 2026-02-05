@@ -1,18 +1,5 @@
-/**
- * Utilidad para manejo centralizado de errores
- * Aplica DRY (Don't Repeat Yourself) en el manejo de errores de API
- */
-
 import { closeLoading, showError } from './alerts';
 
-/**
- * Maneja errores de respuestas de API
- * Extrae el mensaje de error del formato estándar del backend
- * 
- * @param error - Error capturado del catch
- * @param defaultMessage - Mensaje por defecto si no hay mensaje en la respuesta
- * @param defaultTitle - Título del alert (opcional)
- */
 export const handleApiError = (
   error: any,
   defaultMessage: string = 'Ha ocurrido un error',
@@ -20,7 +7,6 @@ export const handleApiError = (
 ): void => {
   closeLoading();
   
-  // Extraer mensaje del formato estándar del backend
   const message = error.response?.data?.error?.message 
     || error.response?.data?.message 
     || error.message 

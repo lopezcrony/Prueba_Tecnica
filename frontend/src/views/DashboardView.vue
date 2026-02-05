@@ -19,7 +19,6 @@ export default defineComponent({
     return {
       uploads: [] as Upload[],
       loading: false,
-      // Paginación
       currentPage: 1,
       itemsPerPage: 10,
       totalItems: 0,
@@ -39,7 +38,6 @@ export default defineComponent({
       return this.authStore.userName;
     },
 
-    // Total de páginas basado en totalItems del backend
     totalPages(): number {
       return Math.ceil(this.totalItems / this.itemsPerPage);
     },
@@ -97,13 +95,11 @@ export default defineComponent({
         
         await showSuccess(response.message, '¡Archivo subido!');
         
-        // Limpiar el componente FileUpload
         const fileUpload = this.$refs.fileUpload as any;
         if (fileUpload && fileUpload.resetUpload) {
           fileUpload.resetUpload();
         }
         
-        // Recargar la lista de uploads
         await this.loadUploads();
       } catch (error: any) {
         closeLoading();
@@ -124,7 +120,6 @@ export default defineComponent({
         
         closeLoading();
         
-        // Crear enlace de descarga
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
@@ -148,7 +143,6 @@ export default defineComponent({
         
         closeLoading();
         
-        // Actualizar la lista
         await this.loadUploads();
         
         showSuccess('Archivo eliminado correctamente', '¡Eliminado!');
@@ -166,11 +160,10 @@ export default defineComponent({
       this.$router.push({ name: 'login' });
     },
 
-    // Métodos de paginación
     async goToPage(page: number) {
       if (page >= 1 && page <= this.totalPages) {
         this.currentPage = page;
-        await this.loadUploads(); // Recargar datos del backend
+        await this.loadUploads();
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     },
