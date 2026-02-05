@@ -45,60 +45,158 @@ proyecto-fullstack/
 
 ## Requisitos Previos
 
-- Docker Desktop instalado
-- Docker Compose v3.8+
-- Node.js 18+ (solo para desarrollo local sin Docker)
+- **Docker Desktop** instalado y ejecutándose
+- **Node.js** 18+ (para desarrollo local del frontend)
+- **npm** o **yarn**
 
-## Instalación y Ejecución
+## 🚀 Inicio Rápido (Recomendado)
 
-### 1. Clonar y configurar variables de entorno
+### Paso 1: Levantar Backend + PostgreSQL con Docker
 
-```powershell
+```bash
+# Desde la raíz del proyecto
+docker-compose up -d
+```
+
+Esto iniciará automáticamente:
+- ✅ PostgreSQL en puerto `5432`
+- ✅ Backend API en puerto `3000` con hot-reload
+- ✅ Migraciones y seeds ejecutados automáticamente
+
+### Paso 2: Verificar que todo esté corriendo
+
+```bash
+# Ver estado de contenedores
+docker-compose ps
+
+# Ver logs
+docker-compose logs -f backend
+```
+
+**El backend estará disponible en:**
+- API: <http://localhost:3000>
+- Swagger Docs: <http://localhost:3000/api/v1/docs>
+
+**Usuario admin creado automáticamente:**
+- Email: `admin@example.com`
+- Password: `admin123`
+
+### Paso 3: Levantar Frontend (local)
+
+```bash
+# En otra terminal
+cd frontend
+npm install
+npm run dev
+```
+
+El frontend estará en <http://localhost:5174>
+
+### Detener servicios
+
+```bash
+# Detener contenedores
+docker-compose down
+
+# Detener y eliminar volúmenes (⚠️ borra la base de datos)
+docker-compose down -v
+```
+
+## 📝 Configuración (Opcional)
+
+Si deseas personalizar las credenciales o puertos, crea un archivo `.env` en la raíz:
+
+```bash
 # Copiar archivo de ejemplo
 cp .env.example .env
 
 # Editar .env con tus configuraciones
 ```
 
-### 2. Inicializar backend (primera vez)
-
-```powershell
-cd backend
-npm install
-```
-
-**Nota**: El `package.json` ya está configurado con todas las dependencias necesarias incluyendo Swagger, TypeORM, JWT, etc.
-
-### 3. Desarrollo local (sin Docker)
-
-```powershell
-cd backend
-npm run dev
-```
-
-### 4. Ejecutar con Docker Compose (recomendado para entrega)
-
-El `docker-compose.yml` levanta PostgreSQL, backend y un servicio opcional `frontend`. Además incluye un servicio `migrator` que ejecuta migraciones y el seed (si existen) antes de que comiences a usar el backend.
-
-```powershell
-# desde la raíz del repo
-docker-compose up -d --build
-docker-compose logs -f
-
-# Para detener y limpiar volúmenes
-docker-compose down -v
-```
+Variables disponibles:
+- `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`
+- `JWT_SECRET`, `JWT_EXPIRES_IN`
+- `PORT` (puerto del backend)
 
 ## Migraciones y Seeds
 
-- En este proyecto se fuerza el uso de migraciones: `DB_SYNCHRONIZE` no está presente en `.env.example`. Esto asegura que el esquema se gestione exclusivamente mediante migraciones versionadas.
-- Recomendación para entrega: genera y versiona migraciones con TypeORM y aplica las migraciones con `npm run migration:run` antes de arrancar el servicio de producción.
-- Scripts útiles en `backend/package.json`:
+El proyecto usa migraciones de TypeORM para gestionar el esquema de la base de datos de forma versionada.
 
-  - `npm run migration:generate -- <Name>` -> generar una migración
-  - `npm run migration:run` -> ejecutar migraciones pendientes
-  - `npm run migration:revert` -> revertir la última migración
-  - `npm run seed` -> ejecutar script de seed (crea admin si no existe)
+**Migrador automático**: El servicio `migrator` en Docker Compose ejecuta automáticamente:
+1. Las migraciones pendientes (`npm run migration:run`)
+2. Los seeds (`npm run seed` - crea usuario admin)
+
+**Scripts disponibles** (en `backend/`):
+
+```bash
+npm run migration:generate -- <Name>  # Generar migración
+npm run migration:run                 # Ejecutar migraciones
+npm run migration:revert              # Revertir última migración
+npm run seed                          # Ejecutar seeds manualmente
+```
+
+## 🐳 Comandos Docker Útiles
+
+```bash
+# Ver logs en tiempo real
+docker-compose logs -f backend
+docker-compose logs -f postgres
+
+# Reiniciar un servicio
+docker-compose restart backend
+
+# Reconstruir imágenes
+docker-compose up -d --build
+
+# Ejecutar migraciones manualmente
+docker-compose up migrator
+
+# Acceder al contenedor del backend
+docker exec -it proyecto-backend sh
+
+# Acceder a PostgreSQL
+docker exec -it proyecto-postgres psql -U admin -d proyecto_db
+
+# Ver estado de contenedores
+docker-compose ps
+```
+
+## 🔧 Solución de Problemas
+
+### Backend no inicia
+
+```bash
+# Ver logs detallados
+docker-compose logs backend
+
+# Reconstruir sin caché
+docker-compose build --no-cache backend
+docker-compose up -d backend
+```
+
+### Base de datos no responde
+
+```bash
+# Verificar estado
+docker-compose ps
+
+# Reiniciar PostgreSQL
+docker-compose restart postgres
+```
+
+### Puerto 3000 o 5432 ya en uso
+
+```bash
+# Detener otros servicios o modificar puertos en docker-compose.yml
+# Cambiar "3000:3000" a "3001:3000" por ejemplo
+```
+
+### WSL needs updating (Windows)
+
+```bash
+# En PowerShell como administrador
+wsl --update
+```
 
 ## Arquitectura del Backend
 

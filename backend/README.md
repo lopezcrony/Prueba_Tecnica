@@ -2,6 +2,25 @@
 
 Sistema de gestión de contactos con importación masiva desde archivos CSV.
 
+## 📋 Requisitos Previos
+
+- **Node.js** >= 18.x
+- **Docker Desktop** (para ejecutar con contenedores)
+- **npm** o **yarn**
+
+## 🛠️ Stack Tecnológico
+
+- **Runtime**: Node.js 18 (Alpine Linux en Docker)
+- **Framework**: Express.js 4.x
+- **Lenguaje**: TypeScript 5.x
+- **ORM**: TypeORM 0.3.x
+- **Base de datos**: PostgreSQL 15
+- **Autenticación**: JWT (jsonwebtoken)
+- **Validación**: class-validator + class-transformer
+- **Documentación**: Swagger/OpenAPI
+- **Seguridad**: Helmet, CORS, bcrypt
+- **Desarrollo**: ts-node-dev (hot-reload)
+
 ## 🎯 Características Principales
 
 - ✅ **Autenticación JWT** con roles (user/admin)
@@ -12,12 +31,41 @@ Sistema de gestión de contactos con importación masiva desde archivos CSV.
 - ✅ **Clean Architecture** (separación de capas)
 - ✅ **Exception-based error handling**
 - ✅ **TypeORM Migrations** (control de versiones de BD)
+- ✅ **Containerización** con Docker y Docker Compose
 
 ## 🚀 Inicio Rápido
 
+### Opción 1: Con Docker (Recomendado) 🐳
+
 ```bash
-# 1. Levantar base de datos
+# 1. Desde la raíz del proyecto (Prueba_Tecnica/)
+cd ..
+
+# 2. Levantar backend + PostgreSQL con Docker Compose
 docker-compose up -d
+
+# 3. Ejecutar migraciones y seeds (se ejecutan automáticamente)
+docker-compose up migrator
+
+# 4. Verificar que todo esté corriendo
+docker-compose ps
+```
+
+**El backend estará disponible en:**
+- API: http://localhost:3000
+- Swagger Docs: http://localhost:3000/api/v1/docs
+- PostgreSQL: localhost:5432
+
+**Usuario administrador creado automáticamente:**
+- Email: `admin@example.com`
+- Password: `admin123`
+- Role: `admin`
+
+### Opción 2: Desarrollo Local (Sin Docker)
+
+```bash
+# 1. Levantar solo PostgreSQL con Docker
+docker-compose up -d postgres
 
 # 2. Instalar dependencias
 npm install
@@ -28,14 +76,9 @@ npm run migration:run
 # 4. Crear usuario admin
 npm run seed
 
-# 5. Iniciar servidor
+# 5. Iniciar servidor en modo desarrollo
 npm run dev
 ```
-
-**Usuario administrador creado:**
-- Email: `admin@example.com`
-- Password: `admin123`
-- Role: `admin`
 
 ## 📁 Estructura de Carpetas
 
@@ -194,6 +237,64 @@ Ver `.env.example` en la raíz del proyecto.
 - ✅ Bcrypt password hashing
 - ✅ Validación de inputs
 - ✅ Error handling centralizado
+
+## 🐳 Comandos Docker Útiles
+
+```bash
+# Ver logs del backend en tiempo real
+docker-compose logs -f backend
+
+# Ver logs de PostgreSQL
+docker-compose logs -f postgres
+
+# Verificar estado de contenedores
+docker-compose ps
+
+# Detener todos los servicios
+docker-compose down
+
+# Detener y eliminar volúmenes (⚠️ BORRA LA BASE DE DATOS)
+docker-compose down -v
+
+# Reiniciar solo el backend
+docker-compose restart backend
+
+# Reconstruir backend sin caché
+docker-compose build --no-cache backend
+
+# Ejecutar comando dentro del contenedor del backend
+docker exec -it proyecto-backend sh
+
+# Ver base de datos con psql
+docker exec -it proyecto-postgres psql -U admin -d proyecto_db
+```
+
+### Solución de Problemas Docker
+
+**Problema: El backend no inicia**
+```bash
+# Ver logs detallados
+docker-compose logs backend
+
+# Reconstruir imagen
+docker-compose up -d --build backend
+```
+
+**Problema: La base de datos no responde**
+```bash
+# Verificar salud del contenedor
+docker-compose ps
+
+# Reiniciar PostgreSQL
+docker-compose restart postgres
+```
+
+**Problema: Cambios en el código no se reflejan**
+```bash
+# El backend usa volúmenes montados, los cambios deberían ser automáticos
+# Si no funciona, reinicia:
+docker-compose restart backend
+```
 
 ## 🧪 Próximos Pasos
 
